@@ -6,9 +6,9 @@ import json
 
 bot = telebot.TeleBot("1536002137:AAEW6IhEfsvKx_F42KeFQt_tlkXWIVlYoVo")
 
-@bot.message_handler(func=lambda message: True)
 payload = {'mes': 'message', 'id': 'message.chat.id'}
-r = requests.post(" ", data = payload, json = )
+# r = requests.post(" ", data = payload, json = )
+@bot.message_handler(func=lambda message: True)
 def echo_all(message):
     bot.send_message(message.chat.id, message.text)
 bot.polling()
