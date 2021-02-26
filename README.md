@@ -24,3 +24,8 @@ Course work. 1 course. MIEM
   > python ./VkAdapter.py
 * Запустите TgAdapter.py
   > python ./TgAdapter.py
+# Тестирование через терминал
+  * Создайте виртуальное окружение и установите все зависимости из requirements.txt (см. Запуск)
+  * Запустите main.py
+    > python main.py
+  * Для завершения работы напишите exit в терминал
