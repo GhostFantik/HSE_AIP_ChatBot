@@ -36,6 +36,7 @@ def distribute(normal_words: list[str], user: str, source: str, raw_message: str
         for name in names:
             if name in normal_words:
                 return get_product_info(name)
+        return 'Не понимаю Вас! Попробуйте снова! Что вы хотите? Роллы или Пиццу?'
 
 
 def add_order_product(order: Order, normal_words: list[str]) -> str:
@@ -47,6 +48,8 @@ def add_order_product(order: Order, normal_words: list[str]) -> str:
                 order.products.append((word, normal_words[idx+1]))
             else:
                 order.products.append((word, 1))
+    if len(order.products) == 0:
+        return 'Таких продуктов не найдено! Повторите попытку!'
     order.ready = 1
     db.set_order_products(order)
     return 'Введите адрес доставки:'
@@ -54,6 +57,7 @@ def add_order_product(order: Order, normal_words: list[str]) -> str:
 
 def add_order_address(order: Order, raw_message: str) -> str:
     order.address = raw_message
+    order.ready = 2
     db.set_order_address(order)
     return 'Заказ оформлен!'
 

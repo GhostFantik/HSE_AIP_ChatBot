@@ -12,7 +12,7 @@ def connect():
     global con
     dotenv.load_dotenv()
     try:
-        con = sq.connect(os.getenv('DB'))
+        con = sq.connect(os.getenv('DB'), check_same_thread=False)
         con.row_factory = sq.Row
         print('Соединение с базой данных установлено!')
     except sq.Error as e:
@@ -149,8 +149,9 @@ def get_order_by_user(user: str) -> Optional[Order]:
     """Получить заказ по user"""
     try:
         cur = con.cursor()
-        o = cur.execute(f'SELECT * FROM orders WHERE user LIKE \'{user}\'').fetchone()
+        o = cur.execute(f'SELECT * FROM orders WHERE user LIKE \'{user}\'').fetchall()
         if o:
+            o = o[-1]
             return Order(user=o['user'], address=o['address'], source=o['source'], ready=o['ready'], _id=o['id'],
                          products=None)
         else:
@@ -180,7 +181,7 @@ def set_order_products(order: Order) -> None:
 def set_order_address(order: Order):
     try:
         cur = con.cursor()
-        cur.execute(f'UPDATE orders SET address = \'{order.address}\' WHERE id = {order.id}')
+        cur.execute(f'UPDATE orders SET address = \'{order.address}\', ready = {order.ready} WHERE id = {order.id}')
         con.commit()
     except sq.Error as e:
         if con:
