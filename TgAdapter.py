@@ -1,18 +1,23 @@
 # token 1536002137:AAEW6IhEfsvKx_F42KeFQt_tlkXWIVlYoVo
 
+import os
+import dotenv
 import telebot
 import requests
 import json
 
+dotenv.load_dotenv()
+
+url = os.getenv('server_message_url')
+
 bot = telebot.TeleBot("1536002137:AAEW6IhEfsvKx_F42KeFQt_tlkXWIVlYoVo")
 
-payload = {'mes': 'message', 'id': 'message.chat.id'}
-# r = requests.post(" ", data = payload, json = )
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
-    bot.send_message(message.chat.id, message.text)
+    response = requests.post(url, data = {
+        "user": message.chat.id,
+        "source": "tg",
+        "message": message.text,
+    })
+    bot.send_message(message.chat.id, response.text)
 bot.polling()
-
-payload = {'mes': 'value1', 'key2': 'value2'}
-r = requests.post("https://github.com/GhostFantik/HSE_AIP_ChatBot.git", data=payload)
-print(r.text)
