@@ -1,5 +1,7 @@
 .env/
 .idea/
+venv/
 *.db
 *.db-journal
 .env
+logs.txt
