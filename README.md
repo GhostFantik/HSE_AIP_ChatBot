@@ -29,3 +29,5 @@ Course work. 1 course. MIEM
   * Запустите main.py
     > python main.py
   * Для завершения работы напишите exit в терминал
+# Логи
+  * Логи расположены в файле logs.txt
