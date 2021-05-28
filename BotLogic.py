@@ -1,7 +1,7 @@
 from models import Product, Order
+from loguru import logger
 import pymorphy2
 import db
-import string
 
 morph = pymorphy2.MorphAnalyzer()
 
@@ -36,7 +36,12 @@ def distribute(normal_words: list[str], user: str, source: str, raw_message: str
         for name in names:
             if name in normal_words:
                 return get_product_info(name)
-        return 'Не понимаю Вас! Попробуйте снова! Что вы хотите? Роллы или Пиццу?'
+        return '''Не понимаю Вас! Попробуйте снова! Что вы хотите? Роллы или Пиццу?
+        Пример сообщения:
+        - покажи мне роллы
+        - покажи мне пиццу
+        - информация о <продукт>
+        - оформить заказ'''
 
 
 def add_order_product(order: Order, normal_words: list[str]) -> str:
@@ -52,6 +57,7 @@ def add_order_product(order: Order, normal_words: list[str]) -> str:
         return 'Таких продуктов не найдено! Повторите попытку!'
     order.ready = 1
     db.set_order_products(order)
+    logger.info('Client added a new product to the order')
     return 'Введите адрес доставки:'
 
 
@@ -59,12 +65,14 @@ def add_order_address(order: Order, raw_message: str) -> str:
     order.address = raw_message
     order.ready = 2
     db.set_order_address(order)
+    logger.info('Client added addrees')
     return 'Заказ оформлен!'
 
 
 def add_order_empty(user: str, source: str) -> str:
     order = Order(user=user, address=None, source=source, products=[], ready=False)
     db.add_order(order)
+    logger.info('Client requested a new order')
     return 'Введите продукты в данном формате:\nНазвание Количество Название Количество'
 
 
@@ -81,6 +89,7 @@ def get_roll() -> str:
     s = ''
     for product in products:
         s += f'№{product.id} {product.name.title()} {product.price}р\n'
+    logger.info('Client requested a roll list')
     return s
 
 
@@ -89,12 +98,14 @@ def get_pizza() -> str:
     s = ''
     for product in products:
         s += f'№{product.id} {product.name.title()} {product.price}р\n'
+    logger.info('Client requested a pizza list')
     return s
 
 
 def get_product_info(name: str) -> str:
     product: Product = db.get_product_by_name(name.title())
     s = f'№{product.id} {product.name} {product.price}p\nОписание:\n{product.description}\nСостав:\n{product.consist}'
+    logger.info(f'Client requested full information about {name.title()}')
     return s
 
 
